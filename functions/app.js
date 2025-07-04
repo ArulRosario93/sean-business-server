@@ -1,16 +1,17 @@
 
-import express, { json } from 'express';
+import express from 'express';
+import { Router } from 'express';
 import serverless from 'serverless-http';
 import cors from 'cors';
 
 import { initializeApp } from "firebase/app";
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged  } from "firebase/auth";
 import { count, getDoc, getDocs, getFirestore, query, where, addDoc, orderBy, limit } from "firebase/firestore";
-import { collection, doc, setDoc } from "firebase/firestore"; 
+import { collection, doc, setDoc } from "firebase/firestore";
 import 'dotenv/config';
 
-
-// Firebase configuration
+// Importing necessary Firebase modules
+// This is important for initializing Firebase and accessing Firestore and Authentication services  
 const firebaseConfig = {
     apiKey: process.env.APIKEY,
     authDomain: process.env.AUTHDOMAIN,
@@ -31,26 +32,40 @@ const auth = getAuth()
 const app = express();
 const PORT = process.env.PORT || 5000;
 
+// Initialize the Router
+const router = Router();
+
 const ipList = {};
+
+
 
 // Middleware to enable CORS (Cross-Origin Resource Sharing)
 // This is important for allowing requests from different origins (like your frontend app)
 app.use(cors());
-// Middleware to parse JSON data
-// This is important for handling JSON data in requests and responses
-app.use(express.json());
+
+// Middleware to parse JSON data (form submissions)
+// This is important for handling JSON data in form submissions
+app.use(express.json({ limit: '50mb' }));
+
+
 // Middleware to parse URL-encoded data (form submissions)
 // This is important for handling form submissions
+
 app.use(express.urlencoded({ extended: true }));
-app.use("/.netlify/functions/app", router);
 
+// Middleware to serve static files
+// This is important for serving static files like images, CSS, and JavaScript files
+app.use(express.static('public'));
+// Middleware to handle serverless functions
+// This is important for making the app compatible with serverless environments like Netlify
 
+// // Middleware to handle IP address tracking
 
-const handleIPAddressTracker = (address) => {
+// const handleIPAddressTracker = (address) => {
 
     
 
-}
+// }
 
 
 const getProducts = async () => {
@@ -157,7 +172,7 @@ const createProduct = async (productData) => {
     return true;
 }
 
-app.post('/products/name', async (req, res) => {
+router.post('/products/name', async (req, res) => {
     const { name } = req.body;
     
     try {
@@ -176,7 +191,7 @@ app.post('/products/name', async (req, res) => {
     }
 });
 
-app.get('/products', async (req, res) => {
+router.get('/products', async (req, res) => {
 
     try {
         
@@ -195,8 +210,7 @@ app.get('/products', async (req, res) => {
 });
 
 // USER LOGIN
-
-app.post("/userlogin", async (req, res) => {
+router.post("/userlogin", async (req, res) => {
 
     const { email, password } = req.body;
 
@@ -230,7 +244,7 @@ app.post("/userlogin", async (req, res) => {
 
 
 // USER REGISTER
-app.post("/userregister", async (req, res) => {
+router.post("/userregister", async (req, res) => {
 
     const { email, password, name } = req.body;
 
@@ -269,7 +283,7 @@ app.post("/userregister", async (req, res) => {
 
 
 // ADMIN METHODS
-app.post("/admin", async (req, res) => {
+router.post("/admin", async (req, res) => {
 
     const { password } = req.body;
 
@@ -292,7 +306,7 @@ app.post("/admin", async (req, res) => {
 });
 
 
-app.get("/admin/product", async (req, res) => {
+router.get("/admin/product", async (req, res) => {
 
     try {
         const data = await getProducts();
@@ -308,8 +322,7 @@ app.get("/admin/product", async (req, res) => {
 });
 
 
-
-app.post("/admin/product/name", async (req, res) => {
+router.post("/admin/product/name", async (req, res) => {
 
     // get only one product by name
     const { name } = req.body;
@@ -328,7 +341,8 @@ app.post("/admin/product/name", async (req, res) => {
     }
 });
 
-app.post("/admin/product/edit", async (req, res) => {
+
+router.post("/admin/product/edit", async (req, res) => {
     const { productId, productdata } = req.body;
 
     console.log("productId: ", productId);
@@ -348,7 +362,7 @@ app.post("/admin/product/edit", async (req, res) => {
 
 
 // ADMIN ORDERS
-app.get("/admin/orders", async (req, res) => {
+router.get("/admin/orders", async (req, res) => {
     
     try {
 
@@ -363,7 +377,7 @@ app.get("/admin/orders", async (req, res) => {
 });
 
 // ADMIN ORDERS BY ID
-app.post("/admin/orders/id", async (req, res) => {
+router.post("/admin/orders/id", async (req, res) => {
 
     const { id } = req.body;
 
@@ -379,7 +393,7 @@ app.post("/admin/orders/id", async (req, res) => {
     }
 });
 
-app.post("/admin/createproduct", async (req, res) => {
+router.post("/admin/createproduct", async (req, res) => {
     const { productData } = req.body;
 
     try {
@@ -392,7 +406,7 @@ app.post("/admin/createproduct", async (req, res) => {
 
 });
 
-app.get('/', (req, res) => {
+router.get('/', (req, res) => {
 
     console.log(req.socket.remoteAddress);
 
@@ -404,4 +418,6 @@ app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
 });
 
-export default serverless(app);
+app.use("/.netlify/functions/app", router); // This line is important for serverless functions to work correctly
+
+export default serverless(router);

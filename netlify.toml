@@ -1,2 +1,7 @@
 [build]
     functions = "functions"
+
+[[redirects]]
+  from = "/api/*"  # Redirect requests to /api/*
+  to = "/.netlify/functions/api/:splat"  # To the serverless function
+  status = 200  # HTTP status code
