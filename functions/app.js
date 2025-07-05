@@ -278,11 +278,11 @@ router.post("/userregister", async (req, res) => {
 router.post("/admin", async (req, res) => {
 
     const { password } = req.body;
-
+    console.log("Received admin password: ", password);
+    console.log("Admin password: ", password);
     try {
         
         // Create a reference to the document you want to retrieve by field "name"
-        console.log("Admin password: ", password);
         if(password == process.env.ADMINPASSWORD) {
             res.json(true);
         }else{
@@ -296,7 +296,6 @@ router.post("/admin", async (req, res) => {
     }
 
 });
-
 
 router.get("/admin/product", async (req, res) => {
 
@@ -406,7 +405,13 @@ router.get('/', (req, res) => {
 
 });
 
+// app.listen(5000, () => {
+//     console.log("Server is running on port 5000");
+// });
 
-app.use("/.netlify/functions/app", router); // This line is important for serverless functions to work correctly
+
+// app.use("/.netlify/functions/app", router); // This line is important for serverless functions to work correctly
 
 module.exports.handler = serverless(app); // Export the app as a serverless function
+
+// export const handler = serverless(app); // Export the app as a serverless function
