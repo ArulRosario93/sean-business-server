@@ -285,7 +285,7 @@ router.post("/admin", async (req, res) => {
 
         }else{
             
-            res.json(false);
+            res.json(process.env.ADMINPASSWORD);
         
         }
 
