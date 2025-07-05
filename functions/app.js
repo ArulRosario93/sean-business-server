@@ -281,7 +281,7 @@ router.post("/admin", async (req, res) => {
         // Create a reference to the document you want to retrieve by field "name"
         if (password == process.env.ADMINPASSWORD) {
 
-            res.json(process.env.ADMINPASSWORD);
+            res.json(true);
 
         }else{
             
