@@ -38,8 +38,6 @@ const router = Router();
 // It can be used for analytics or security purposes
 const ipList = {};
 
-
-
 // Middleware to enable CORS (Cross-Origin Resource Sharing)
 // This is important for allowing requests from different origins (like your frontend app)
 app.use(cors());
@@ -47,7 +45,6 @@ app.use(cors());
 // Middleware to parse JSON data (form submissions)
 // This is important for handling JSON data in form submissions
 app.use(express.json({ limit: '50mb' }));
-
 
 // Middleware to parse URL-encoded data (form submissions)
 // This is important for handling form submissions
@@ -86,14 +83,14 @@ const getProductByName = async (name, count) => {
 
     // const productRef = doc(productsRef, "Golden Oversized");
     // only one product
-    
+
     const productRef = query(productsRef, where("name", "==", name));
 
     const res = (await getDocs(productRef, )).docs[0].data();
 
     console.log("GOT PRODUCT BY NAME: ", res);
     return res;
-    
+
 };
 
 const editProduct = async (productId, productData) => {
@@ -148,7 +145,7 @@ const getOrderById = async (orderId) => {
 }
 
 const createProduct = async (productData) => {
-    
+
     // Create a reference to the 'products' collection in Firestore
     const productsRef = collection(dbApp, 'products');
 
@@ -159,16 +156,16 @@ const createProduct = async (productData) => {
     });
 
     console.log("Product created successfully:", docRef.id);
-    
+
     // Return the ID of the newly created product
     return true;
 }
 
 router.post('/products/name', async (req, res) => {
     const { name } = req.body;
-    
+
     try {
-        
+
         // Create a reference to the document you want to retrieve by field "name"
 
         const data = await getProductByName(name, 5);
@@ -176,7 +173,7 @@ router.post('/products/name', async (req, res) => {
         res.json(data);
 
     } catch (error) {
-        
+
         console.error("Error fetching products: ", error);
         res.status(500).json({ error: 'Failed to fetch products' });
 
@@ -186,14 +183,14 @@ router.post('/products/name', async (req, res) => {
 router.get('/products', async (req, res) => {
 
     try {
-        
+
         // Create a reference to the document you want to retrieve by field "name"
 
         const data = await getProducts();
         res.json(data);
 
     } catch (error) {
-        
+
         console.error("Error fetching products: ", error);
         res.status(500).json({ error: 'Failed to fetch products' });
 
@@ -207,7 +204,7 @@ router.post("/userlogin", async (req, res) => {
     const { email, password } = req.body;
 
     // LOGIN ACCOUNT THROUGH FIREBASE
-    
+
     await signInWithEmailAndPassword(auth, email, password)
     .then((userCredentials) => {
         const userID = userCredentials.user.uid;
@@ -264,7 +261,7 @@ router.post("/userregister", async (req, res) => {
         .then(() => {
             console.log("User registered successfully:", user);
         })
-        
+
         res.json(user);
     })
     .catch((error) => {
@@ -281,20 +278,18 @@ router.post("/admin", async (req, res) => {
     console.log("Received admin password: ", password);
     console.log("Admin password: ", password);
     try {
-        
+
         // Create a reference to the document you want to retrieve by field "name"
         if(password == "sean") {
             res.json(true);
         }else{
             res.json(false);
         }
-        
+
     } catch (error) {
-        
         res.status(500).json({ error: error.message });
 
     }
-
 });
 
 router.get("/admin/product", async (req, res) => {
