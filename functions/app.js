@@ -270,7 +270,6 @@ router.post("/userregister", async (req, res) => {
 
 });
 
-
 // ADMIN METHODS
 router.post("/admin", async (req, res) => {
 
@@ -280,7 +279,15 @@ router.post("/admin", async (req, res) => {
     try {
 
         // Create a reference to the document you want to retrieve by field "name"
-        res.json(true);
+        if (password == process.env.ADMINPASSWORD) {
+
+            res.json(true);
+
+        }else{
+            
+            res.json(false);
+        
+        }
 
     } catch (error) {
         res.status(500).json({ error: error.message });
@@ -401,7 +408,7 @@ router.get('/', (req, res) => {
 // });
 
 
-// app.use("/.netlify/functions/app", router); // This line is important for serverless functions to work correctly
+app.use("/.netlify/functions/app", router); // This line is important for serverless functions to work correctly
 
 module.exports.handler = serverless(app); // Export the app as a serverless function
 
