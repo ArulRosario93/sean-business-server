@@ -27,14 +27,15 @@ const DB = initializeApp(firebaseConfig);
 const dbApp = getFirestore(DB);
 const auth = getAuth()
 
-
 // Initialize the Server (App)
 const app = express();
-const PORT = process.env.PORT || 5000;
 
 // Initialize the Router
 const router = Router();
 
+// Initialize an empty object to store IP addresses
+// This is important for tracking IP addresses of incoming requests
+// It can be used for analytics or security purposes
 const ipList = {};
 
 
@@ -59,15 +60,6 @@ app.use(express.static('public'));
 // Middleware to handle serverless functions
 // This is important for making the app compatible with serverless environments like Netlify
 
-// // Middleware to handle IP address tracking
-
-// const handleIPAddressTracker = (address) => {
-
-    
-
-// }
-
-
 const getProducts = async () => {
 
     // Create a reference to the 'products' collection in Firestore
@@ -84,7 +76,7 @@ const getProducts = async () => {
 
     // Return the array of products
     return products;
-
+    
 }
 
 const getProductByName = async (name, count) => {
@@ -414,10 +406,7 @@ router.get('/', (req, res) => {
 
 });
 
-app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
-});
 
 app.use("/.netlify/functions/app", router); // This line is important for serverless functions to work correctly
 
-export default serverless(router);
+module.exports.handler = serverless(app); // Export the app as a serverless function
