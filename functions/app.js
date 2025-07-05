@@ -76,7 +76,7 @@ const getProducts = async () => {
 
     // Return the array of products
     return products;
-    
+
 }
 
 const getProductByName = async (name, count) => {
@@ -282,7 +282,7 @@ router.post("/admin", async (req, res) => {
     try {
         
         // Create a reference to the document you want to retrieve by field "name"
-
+        console.log("Admin password: ", password);
         if(password == process.env.ADMINPASSWORD) {
             res.json(true);
         }else{
