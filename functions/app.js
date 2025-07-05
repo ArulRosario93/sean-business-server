@@ -280,11 +280,7 @@ router.post("/admin", async (req, res) => {
     try {
 
         // Create a reference to the document you want to retrieve by field "name"
-        if(password == "sean") {
-            res.json(true);
-        }else{
-            res.json(false);
-        }
+        res.json(true);
 
     } catch (error) {
         res.status(500).json({ error: error.message });
